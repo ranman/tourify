@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>GE Tour Maker UI Mockup</title>
+		<style type="text/css">
+html {
+	height: 100%;
+	padding-bottom: 1px;
+}
+#propertyInspector {
+	text-align: center;
+	border: 1px solid;
+	background-color: #DEF;
+	border-color: #BCD;
+	display: none;
+}
+#content {
+	width: 97%;
+	border: 1px solid;
+}
+.use-inspector #content { width: 64%; }
+.use-inspector #propertyInspector {
+	display: block;
+	width: 32%;
+}
+.inspector-at-right #propertyInspector { margin-left: 1%; }
+.use-inspector.inspector-at-right #propertyInspector, .inspector-at-right #separator { float: right };
+.inspector-at-right #content { float: left };
+#separator {
+	background-color: #EEE;
+	border: 1px solid #CCC;
+	display: block;
+	outline: none;
+	width: 1%;
+	float: right;
+}
+.use-inspector #separator {
+	border-color: #FFF;
+}
+#separator:hover {
+	border-color: #ABC;
+	background: #DEF;
+}
+		</style>
+		<script src="http://www.google.com/jsapi"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+		<script>
+google.load("earth", "1");
+var ge = null;
+function init() {
+	google.earth.createInstance('preview', initCB, failureCB, { database: 'http://khmdb.google.com/?db=mars' });
+}
+function initCB(instance) {
+	ge = instance;
+	ge.getWindow().setVisibility(true);
+}
+function failureCB(errorCode) {}
+google.setOnLoadCallback(init);
+		</script>
+		<script src="http://static.simile.mit.edu/timeline/api-2.3.0/timeline-api.js?bundle=true" type="text/javascript"></script>
+		<script type="text/javascript">
+var tl;
+function onLoad() {
+var bandInfos = [
+ Timeline.createBandInfo({
+     width:          "20%", 
+     intervalUnit:   Timeline.DateTime., 
+     intervalPixels: 100
+ }),
+ Timeline.createBandInfo({
+     width:          "20%",
+     intervalUnit:   Timeline.DateTime.YEAR, 
+     intervalPixels: 200
+ })
+];
+tl = Timeline.create(document.getElementById("timeline"), bandInfos);
+}
+
+var resizeTimerID = null;
+function onResize() {
+ if (resizeTimerID == null) {
+     resizeTimerID = window.setTimeout(function() {
+         resizeTimerID = null;
+         tl.layout();
+     }, 500);
+ }
+}
+		</script>
+	</head>
+	<body onload="onLoad();" onresize="onResize();">
+		<h3>Tour Name</h3>
+		<div id="main" class="use-inspector inspector-at-right">
+			<div id="propertyInspector">
+				<h4>Property Inspector</h4>
+				<form>
+					<input type="text" name="stuff" value="Stuff">
+					<input type="text" name="stuffs" value="Stuff">
+				</form>
+			</div>
+			<a href="#" id="separator">&gt;</a>
+			<div id="content">
+				<div id="preview" style="border: 1px solid silver; height: 400px; width: 600px; margin: 0 auto;"></div>
+				<div id="timeline" style="border: 1px solid black; width: 100%; height: 300px;">
+					<noscript>
+This page uses Javascript to show you a Timeline. Please enable Javascript in your browser to see the full page. Thank you.
+					</noscript>
+				</div>
+			</div>
+		</div>
+	<script type="text/javascript">
+$(document).ready(function(){
+	var objMain = $('#main')
+	var objSeparator = $('#separator')
+	function showInspector(){
+		objMain.addClass('use-inspector').show("slow");
+		objSeparator.html("&gt;");
+	}
+	function hideInspector(){
+		objMain.removeClass('use-inspector');
+		objSeparator.html("&lt;");
+	}
+	
+	objSeparator.click(function(e){
+		e.preventDefault();
+		if (objMain.hasClass('use-inspector')) {
+			hideInspector();
+		} else {
+			showInspector()
+		}
+	}).css('height', objSeparator.parent().outerHeight() + 'px');
+});
+	</script>
+	</body>
+</html>
