@@ -1,4 +1,4 @@
-geocamShare.core.handleNewFeatures({
+{
     "result": {
         "crs": {
             "properties": {
@@ -21675,4 +21675,4 @@ geocamShare.core.handleNewFeatures({
         ], 
         "type": "FeatureCollection"
     }
-});
+}
