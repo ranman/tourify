@@ -6,6 +6,7 @@ class Overlay(models.Model):
   lat = models.FloatField()
   lng = models.FloatField()
   uri = models.URLField()
+  name = models.TextField()
   content = models.TextField()
 
 class Placemark(models.Model):
