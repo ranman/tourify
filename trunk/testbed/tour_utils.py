@@ -2,26 +2,29 @@ import json, urllib, sqlite3
 from datetime import datetime, date, time
 
 DATA_FEED = 'features.json'
+#DATA_FEED = 'http://radish.arc.nasa.gov/share/features.json'
 IMG_URL = 'http://radish.arc.nasa.gov/share/data/K10Black/processed/'
+
 data = json.load(urllib.urlopen(DATA_FEED))
 data = data["result"]["features"]
+
 conn = sqlite3.connect('db')
 c = conn.cursor()
 
 
-def grab_by_property(key, value):
+def get_by_property(key, value):
   matches = [] 
   for i in data:
     if value in i['properties'][key]:
       matches.append(i);
   return matches
 
-def grab_by_tag(tag):
-  return grab_by_property('tag', tag)
+def get_by_tag(tag):
+  return get_by_property('tag', tag)
 
 #type is any of LidarScan, Gpr, PancamPano, MicroImage, XrfScan
-def grab_by_subtype(type):
-  return grab_by_property('subtype', type)
+def get_by_subtype(type):
+  return get_by_property('subtype', type)
 
 def decode_feature(feature):
   feat_dict = {}
@@ -38,8 +41,11 @@ def decode_feature(feature):
   type_to_url_map = {
     'MicroImage':'full.jpg',
     'LidarScan':'full.jpg',
-    'PancamPano':'full.jpg', #TODO: fix url
+    'PancamPano':'full.jpg', #TODO: fix url or come up with a better way to put into database
     'XrfScan':'full.jpg'
   }
   feat_dict['url'] += type_to_url_map[feat_dict['type']]
   return feat_dict
+
+def insert_feature(feature):
+  pass
