@@ -29,12 +29,10 @@ def get_by_subtype(type):
 def decode_feature(feature):
   feat_dict = {}
   feat_dict['type'] = feature['properties']['subtype']
-  if feat_dict['type'] == 'Gpr':
-    pass
-  else:
-    feat_dict['lat'] = feature['geometry']['coordinates'][0]
-    feat_dict['lng'] = feature['geometry']['coordinates'][1]
-    feat_dict['alt'] = feature['properties']['altitude']
+  if feat_dict['type'] != 'Gpr':
+    feat_dict['lat'] = float(feature['geometry']['coordinates'][0])
+    feat_dict['lng'] = float(feature['geometry']['coordinates'][1])
+    feat_dict['alt'] = float(feature['properties']['altitude'])
 
   feat_dict['timestamp'] = datetime.strptime(feature['properties']['timestamp'].rstrip('-5:00'), '%Y-%m-%dT%H:%M:%S')
   feat_dict['url'] = IMG_URL + '/' + feature['properties']['datetext'] + feature['properties']['requestId'] + '/' 
@@ -47,7 +45,32 @@ def decode_feature(feature):
   feat_dict['url'] += type_to_url_map[feat_dict['type']]
   return feat_dict
 
-def insert_feature(feature):
+def insert_feature(feature, start, finish):
+  from tourmaker import models
+  placemark = Placemark(lat=feature['lat'],lng=feature['lng'],content=feature) 
+  timeline_item = TimelineItem(begin=start, end=finsih, item_type=placemark) 
+  timeline_item.save()
+
+def build_kml(timeline_item):
+  kml_str = "<gx:FlyTo>"
+  kml_str += "<gx:duration>" + timeline_item.end-timeline_item.start + "</gx:duration>"
   pass
-def build_tour():
-  pass
+def build_tour(features):
+  kml_str = """
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2/"
+ xmlns:gx="http://www.google.com/kml/ext/2.2">
+<Document>
+  <name>Automated KML Tour</name>
+  <open>1</open>
+  <gx:Tour>
+  <name>NAME</name>
+  <gx:Playlist>
+  """
+# go over ever feature add a <gx:FlyTo> and a duration and a <gx:balloonVisibility>1</gx:balloonVisibility>.
+  kml_str += """</gx:Playlist>
+  </gx:Tour>
+</Document>
+</kml>"""
+
+  return kml_str
